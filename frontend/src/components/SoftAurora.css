@@ -1,0 +1,108 @@
+.soft-aurora {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+  contain: paint;
+  background: #000;
+  filter: brightness(var(--aurora-brightness));
+  /* Optimize for better scroll performance */
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+
+.soft-aurora__base,
+.soft-aurora__layer,
+.soft-aurora__vignette {
+  position: absolute;
+  inset: 0;
+}
+
+.soft-aurora__base {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.035), transparent 18%),
+    linear-gradient(180deg, #000000 0%, #000000 100%);
+}
+
+.soft-aurora__layer {
+  inset: -10%;
+  transform-origin: center;
+  will-change: transform;
+  mix-blend-mode: screen;
+  /* Reduce GPU load during scroll */
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+.soft-aurora__layer--primary {
+  opacity: 0.27;
+  background:
+    radial-gradient(
+      ellipse at calc(34% + (var(--aurora-band-spread) * 4%)) calc(22% + (var(--aurora-band-height) * 8%)),
+      color-mix(in srgb, var(--aurora-color-1) 38%, transparent) 0%,
+      color-mix(in srgb, var(--aurora-color-1) 14%, transparent) 28%,
+      transparent 62%
+    );
+  /* Reduce blur for better performance */
+  filter: blur(32px) saturate(115%);
+  animation: aurora-drift calc(34s / var(--aurora-speed)) ease-in-out infinite alternate;
+}
+
+.soft-aurora__layer--secondary {
+  opacity: 0.24;
+  background:
+    radial-gradient(
+      ellipse at calc(72% - (var(--aurora-band-spread) * 5%)) calc(28% + (var(--aurora-band-height) * 10%)),
+      color-mix(in srgb, var(--aurora-color-2) 42%, transparent) 0%,
+      color-mix(in srgb, var(--aurora-color-2) 16%, transparent) 30%,
+      transparent 64%
+    );
+  /* Reduce blur for better performance */
+  filter: blur(38px) saturate(118%);
+  animation:
+    aurora-drift-secondary calc(42s / var(--aurora-speed)) ease-in-out infinite,
+    aurora-pulse calc(22s / var(--aurora-color-speed)) ease-in-out infinite;
+}
+
+.soft-aurora__vignette {
+  background:
+    radial-gradient(circle at center, transparent 42%, rgba(0, 0, 0, 0.28) 76%, rgba(0, 0, 0, 0.72) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, transparent 20%, transparent 80%, rgba(0, 0, 0, 0.24) 100%);
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(-2%, -1%, 0) scale(calc(var(--aurora-scale) * 0.98)) rotate(-5deg);
+  }
+  100% {
+    transform: translate3d(3%, 2%, 0) scale(calc(var(--aurora-scale) * 1.03)) rotate(4deg);
+  }
+}
+
+@keyframes aurora-drift-secondary {
+  0%,
+  100% {
+    transform: translate3d(1%, -2%, 0) scale(calc(var(--aurora-scale) * 0.99)) rotate(var(--aurora-layer-offset));
+  }
+  50% {
+    transform: translate3d(-3%, 2%, 0) scale(calc(var(--aurora-scale) * 1.04))
+      rotate(calc(var(--aurora-layer-offset) + 6deg));
+  }
+}
+
+@keyframes aurora-pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.26;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .soft-aurora__layer {
+    animation: none !important;
+  }
+}
