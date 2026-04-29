@@ -6,11 +6,6 @@ import { authAPI } from '../services/api';
 import SoftAurora from '../components/SoftAurora';
 import { BrandLockup } from '../components/Brand';
 
-const DEMO_USERS = [
-  { role: 'Admin', email: 'admin@bank.com', password: 'admin123' },
-  { role: 'Manager', email: 'manager@bank.com', password: 'manager123' },
-];
-
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -18,6 +13,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setMounted(true), 40);
@@ -118,15 +114,25 @@ export default function Login() {
 
                 <div>
                   <label className="label">Password</label>
-                  <input
-                    className="input"
-                    name="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={form.password}
-                    onChange={handleChange}
-                    required
-                  />
+                  <div className="relative">
+                    <input
+                      className="input pr-20"
+                      name="password"
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="Enter your password"
+                      value={form.password}
+                      onChange={handleChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((current) => !current)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold transition-opacity hover:opacity-80"
+                      style={{ color: 'var(--text-secondary)' }}
+                    >
+                      {showPassword ? 'Hide' : 'Show'}
+                    </button>
+                  </div>
                 </div>
 
                 <button
@@ -149,39 +155,6 @@ export default function Login() {
                   )}
                 </button>
               </form>
-
-              <div className="glass-sm px-4 py-3.5">
-                <div>
-                  <p className="label mb-1.5">Demo Access</p>
-                  <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    Load one of the seeded roles to preview the interface quickly.
-                  </p>
-                </div>
-
-                <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  {DEMO_USERS.map((entry) => (
-                    <button
-                      key={entry.role}
-                      type="button"
-                      onClick={() => setForm({ email: entry.email, password: entry.password })}
-                      className="flex w-full items-center justify-between rounded-2xl px-3.5 py-2.5 text-left transition-colors"
-                      style={{
-                        background: 'rgba(255,255,255,0.05)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        color: 'var(--text-secondary)',
-                      }}
-                    >
-                      <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
-                        {entry.role}
-                      </span>
-                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.73rem' }}>
-                        {entry.email}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <p className="text-center text-sm" style={{ color: 'var(--text-muted)' }}>
                 Need an account?{' '}
                 <Link to="/register" className="font-semibold hover:underline" style={{ color: '#d8deff' }}>
