@@ -2,6 +2,9 @@
   "name": "banking-backend",
   "version": "1.0.0",
   "type": "commonjs",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "nodemon src/index.js",
     "dev:plain": "node src/index.js",
