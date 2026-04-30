@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Spinner } from '../components/ui';
-import { authAPI } from '../services/api';
+import { authAPI, getApiErrorMessage } from '../services/api';
 import SoftAurora from '../components/SoftAurora';
 import { BrandLockup } from '../components/Brand';
 
@@ -17,6 +17,10 @@ export default function Register() {
   useEffect(() => {
     const timer = window.setTimeout(() => setMounted(true), 40);
     return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    void authAPI.warmup();
   }, []);
 
   const handleChange = (event) => {
@@ -49,7 +53,7 @@ export default function Register() {
       login(response.data.token, response.data.user);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || err.response?.data?.errors?.[0]?.msg || 'Registration failed');
+      setError(getApiErrorMessage(err, 'Registration failed'));
     } finally {
       setLoading(false);
     }

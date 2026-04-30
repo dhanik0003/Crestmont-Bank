@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Spinner } from '../components/ui';
-import { authAPI } from '../services/api';
+import { authAPI, getApiErrorMessage } from '../services/api';
 import SoftAurora from '../components/SoftAurora';
 import { BrandLockup } from '../components/Brand';
 
@@ -20,6 +20,10 @@ export default function Login() {
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    void authAPI.warmup();
+  }, []);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     setForm((current) => ({ ...current, [name]: value }));
@@ -35,7 +39,7 @@ export default function Login() {
       login(response.data.token, response.data.user);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(getApiErrorMessage(err, 'Login failed'));
     } finally {
       setLoading(false);
     }
