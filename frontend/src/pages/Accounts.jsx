@@ -410,8 +410,8 @@ export default function Accounts() {
                   </p>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-[1fr_1fr_auto]">
-                  <div>
+                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_12rem]">
+                  <div className="min-w-0">
                     <label className="label">Start Date</label>
                     <input
                       type="date"
@@ -421,7 +421,7 @@ export default function Accounts() {
                     />
                   </div>
 
-                  <div>
+                  <div className="min-w-0">
                     <label className="label">End Date</label>
                     <input
                       type="date"
@@ -431,7 +431,7 @@ export default function Accounts() {
                     />
                   </div>
 
-                  <div className="flex items-end">
+                  <div className="flex items-end md:min-w-[12rem]">
                     <button type="button" disabled={exporting} onClick={exportStatement} className="btn btn-primary w-full">
                       {exporting ? 'Generating...' : 'Download PDF'}
                     </button>
