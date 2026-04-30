@@ -52,6 +52,12 @@ export const accountAPI = {
   getAllAccounts:  ()          => dedupedGet('/accounts/all'),
   getUserAccounts: (userId)    => dedupedGet(`/accounts/${userId}`),
   lookupById:      (accountId) => dedupedGet(`/accounts/lookup/${accountId}`),
+  downloadStatement: (id, params) =>
+    api.get(`/accounts/${id}/statement`, {
+      params,
+      responseType: 'arraybuffer',
+      headers: { Accept: 'application/pdf' },
+    }),
   deleteAccount:   (id)        => api.delete(`/accounts/${id}`),
 };
 

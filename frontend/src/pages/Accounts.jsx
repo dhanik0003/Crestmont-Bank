@@ -16,6 +16,38 @@ const ACCOUNT_TYPES = ['SAVINGS', 'CURRENT', 'FD'];
 
 const formatDateInput = (date) => date.toISOString().slice(0, 10);
 
+const getBinaryErrorMessage = async (error, fallback) => {
+  const data = error?.response?.data;
+
+  if (data && typeof data === 'object' && 'error' in data && typeof data.error === 'string') {
+    return data.error;
+  }
+
+  if (data instanceof ArrayBuffer) {
+    try {
+      const parsed = JSON.parse(new TextDecoder().decode(data));
+      if (typeof parsed?.error === 'string') {
+        return parsed.error;
+      }
+    } catch {
+      return fallback;
+    }
+  }
+
+  if (typeof Blob !== 'undefined' && data instanceof Blob) {
+    try {
+      const parsed = JSON.parse(await data.text());
+      if (typeof parsed?.error === 'string') {
+        return parsed.error;
+      }
+    } catch {
+      return fallback;
+    }
+  }
+
+  return fallback;
+};
+
 export default function Accounts() {
   const [accounts, setAccounts] = useState([]);
   const [selected, setSelected] = useState(null);
@@ -158,7 +190,7 @@ export default function Accounts() {
       window.URL.revokeObjectURL(url);
       showToast('Statement download started.', 'success');
     } catch (err) {
-      showToast(err.response?.data?.error || 'Failed to export statement', 'error');
+      showToast(await getBinaryErrorMessage(err, 'Failed to export statement'), 'error');
     } finally {
       setExporting(false);
     }
